@@ -1,8 +1,10 @@
+import org.junit.Before;
 import org.junit.Test;
-import weather.APIWeatherReport;
-import weather.CurrentWeather;
-import weather.UserRequest;
-import weather.ValidateInfo;
+
+import data.data.Temperature;
+import data.service.APIWeatherReport;
+import data.service.APIWeatherRequest;
+import open.OpenWeatherRepository;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -20,9 +22,12 @@ import static org.junit.Assert.fail;
 //http://samples.openweathermap.org/data/2.5/weather?q=Tallinn,ee&appid=8695d243f5c59d68389568a82bdc9e2b
 
 public class WeatherForecastTest {
+    private OpenWeatherRepository repo;
 
-    //private static Constants.COUNTRY_CODE exampleCountryCode;
-    //private static Constants.UNIT exampleUnit;
+    @Before
+    public void setUp() throws Exception {
+        this.repo = new OpenWeatherRepository();
+    }
 
     @Test
     public void testHttpConnectionToExampleApi() {
@@ -31,15 +36,13 @@ public class WeatherForecastTest {
 
     @Test
     public void testIfAPIResponseCityEqualsUserRequestCity() {
-
         try {
             //given
-            UserRequest userRequest = new UserRequest("linn", "coordinates");
-            CurrentWeather currentWeather = new CurrentWeather();
+            APIWeatherRequest userRequest = new APIWeatherRequest("Tallinn", "ee");
             //when i try
-            APIWeatherReport apiWeatherReport = currentWeather.getCurrentWeather(userRequest);
+            APIWeatherReport apiWeatherReport = repo.getCurrentWeather(userRequest);
             //then i expect
-            assertEquals(userRequest.getCityName(), apiWeatherReport.getCityName());
+            assertEquals(userRequest.getCityName(), apiWeatherReport.getCity().getName());
         } catch (Exception something) {
             fail("Test failed because " + something.getMessage());
         }
@@ -47,12 +50,10 @@ public class WeatherForecastTest {
 
     @Test
     public void testIfAPIResponseGEOEqualsUserRequestGEO() {
-
         try {
-            UserRequest userRequest = new UserRequest("linn", "coordinates");
-            CurrentWeather currentWeather = new CurrentWeather();
-            APIWeatherReport apiWeatherReport = currentWeather.getCurrentWeather(userRequest);
-            assertEquals(userRequest.getCoordinates(), apiWeatherReport.getCoordinates());
+            APIWeatherRequest userRequest = new APIWeatherRequest("Tallinn", "ee");
+            APIWeatherReport apiWeatherReport = repo.getCurrentWeather(userRequest);
+            assertEquals(userRequest.getCountry(), apiWeatherReport.getCity().getCountryCode());
         } catch (Exception something) {
             fail("Test failed because " + something.getMessage());
         }
@@ -67,10 +68,10 @@ public class WeatherForecastTest {
     public void testIfMinIsMinAndMaxIsMaxTemp() {
 
         try {
-            UserRequest userRequest = new UserRequest("linn", "coordinates");
-            CurrentWeather currentWeather = new CurrentWeather();
-            int apiMaxTemp = currentWeather.getMaxTemp(userRequest);
-            int apiMinTemp = currentWeather.getMinTemp(userRequest);
+            APIWeatherRequest userRequest = new APIWeatherRequest("Tallinn", "ee");
+            APIWeatherReport currentWeather = repo.getCurrentWeather(userRequest);
+            double apiMaxTemp = currentWeather.getTemperature().getMax();
+            double apiMinTemp = currentWeather.getTemperature().getMin();
             assertTrue(apiMinTemp < apiMaxTemp);
         } catch (Exception something) {
             fail("Test failed because " + something.getMessage());
@@ -107,12 +108,11 @@ public class WeatherForecastTest {
     public void testIfWeatherRepoResponseCurrentTempIsValid() {
         try{
             // [given]
-            UserRequest userRequest = new UserRequest("linn", "coordinates");
-            CurrentWeather currentWeather = new CurrentWeather();
-            ValidateInfo validateInfo = new ValidateInfo(false, false);
+            APIWeatherRequest userRequest = new APIWeatherRequest("Tallinn", "ee");
             // [when]
-            APIWeatherReport report = currentWeather.getCurrentWeather(userRequest);
+            APIWeatherReport apiWeatherReport = repo.getCurrentWeather(userRequest);
             // [then]
+            ValidateInfo validateInfo = new ValidateInfo(apiWeatherReport.getTemperature(), apiWeatherReport.getCoordinates());
             assertTrue(validateInfo.validateTemperature());
         }catch (Exception something){
             fail("Test failed, cause: " + something.getMessage());
