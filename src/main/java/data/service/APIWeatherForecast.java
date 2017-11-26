@@ -15,6 +15,5 @@ import lombok.Value;
 @Value
 public class APIWeatherForecast {
     @NonNull City city;
-    @NonNull CoordinatesOfCity coordinates;
     @NonNull List<OneDay> dayReports;
 }

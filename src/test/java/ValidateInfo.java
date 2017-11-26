@@ -14,16 +14,14 @@ public class ValidateInfo {
 
 
     public boolean validateTemperature() {
-        double current = temperature.getCurrent();
         double max = temperature.getMax();
         double min = temperature.getMin();
 
-        boolean currentValid = 200 <= current && current <= 350;
-        boolean maxValid = 200 <= max && max <= 350;
-        boolean minValid = 200 <= min && min <= 350;
-        boolean areInOrder = min <= current && current <= max;
+        boolean maxValid = -80 <= max && max <= 80;
+        boolean minValid = -80 <= min && min <= 80;
+        boolean areInOrder = min <= max;
 
-        return currentValid && maxValid && minValid && areInOrder;
+        return maxValid && minValid && areInOrder;
     }
 
 

@@ -7,4 +7,5 @@ import lombok.Value;
 public class City {
     @NonNull String name;
     @NonNull String countryCode;
+    @NonNull CoordinatesOfCity coordinates;
 }

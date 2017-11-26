@@ -12,6 +12,6 @@ import lombok.Value;
 public class APIWeatherReport {
 
     @NonNull City city;
-    @NonNull CoordinatesOfCity coordinates;
-    @NonNull Temperature temperature;
+    @NonNull Temperature temperatureRange;
+    @NonNull double temperature;
 }

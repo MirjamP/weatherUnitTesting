@@ -1,104 +1,65 @@
+import data.data.City;
+import data.data.CoordinatesOfCity;
+import data.service.APIWeatherForecast;
+import data.service.APIWeatherRequest;
+import open.HttpReader;
+import open.JsonConverter;
+import open.OpenWeatherConverter;
+import open.OpenWeatherRepository;
+import open.data.OpenWeatherForecast;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import data.data.Temperature;
-import data.service.APIWeatherReport;
-import data.service.APIWeatherRequest;
-import open.OpenWeatherRepository;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.fail;
-
-//repo on klass, millelt saab küsida infot, nagu küsiks mälust midagi; repo on wrapper APIle
-//interface
-//testwrapping
-//test suite
-//postmani URL pmst on see, kust info küsida tuleb:
-//http://samples.openweathermap.org/data/2.5/weather?q=Tallinn,ee&appid=8695d243f5c59d68389568a82bdc9e2b
-
+/**
+ * Created by mirja on 26/11/2017.
+ */
 public class WeatherForecastTest {
+
+
+    private OpenWeatherConverter mockConverter = mock(OpenWeatherConverter.class);
+    private HttpReader mockHttpReader = mock(HttpReader.class);
+    private JsonConverter mockJsonReader = mock(JsonConverter.class);
     private OpenWeatherRepository repo;
 
     @Before
     public void setUp() throws Exception {
-        this.repo = new OpenWeatherRepository();
+        this.repo = new OpenWeatherRepository(mockHttpReader, mockConverter, mockJsonReader);
     }
 
     @Test
-    @Ignore
-    public void testHttpConnectionToExampleApi() {
-        fail();
+    public void testGetForecastThreeDaysPassesDataFromReaderToJsonReader() throws Exception {
+        InputStreamReader inputStreamReader = mock(InputStreamReader.class);
+        when(mockHttpReader.read(any()))
+                .thenReturn(inputStreamReader);
+        this.repo.getForecastThreeDays(new APIWeatherRequest("Tallinn", "ee"));
+        verify(mockHttpReader).read(any());
+        verify(mockJsonReader).parseForecast(inputStreamReader);
     }
 
     @Test
-    public void testIfAPIResponseCityEqualsUserRequestCity() throws IOException {
-        //given
-        APIWeatherRequest userRequest = new APIWeatherRequest("Tallinn", "ee");
-        //when i try
-        APIWeatherReport apiWeatherReport = repo.getCurrentWeather(userRequest);
-        //then i expect
-        assertEquals(userRequest.getCityName(), apiWeatherReport.getCity().getName());
+    public void testGetForecastThreeDaysPassesDataFromJsonReaderToConverter() throws Exception {
+        OpenWeatherForecast returnedForecast = mock(OpenWeatherForecast.class);
+        when(mockJsonReader.parseForecast(any()))
+                .thenReturn(returnedForecast);
+        this.repo.getForecastThreeDays(new APIWeatherRequest("Tallinn", "ee"));
+        verify(mockJsonReader).parseForecast(any());
+        verify(mockConverter).convert(returnedForecast);
     }
 
     @Test
-    public void testIfAPIResponseGEOEqualsUserRequestGEO() throws IOException {
-        APIWeatherRequest userRequest = new APIWeatherRequest("Tallinn", "ee");
-        APIWeatherReport apiWeatherReport = repo.getCurrentWeather(userRequest);
-        assertEquals(userRequest.getCountry().toUpperCase(), apiWeatherReport.getCity().getCountryCode());
-    }
-
-    @Test
-    @Ignore
-    public void testIfInternetConnected() {
-        fail();
-    }
-
-    @Test
-    public void testIfMinIsMinAndMaxIsMaxTemp() throws IOException {
-        APIWeatherRequest userRequest = new APIWeatherRequest("Tallinn", "ee");
-        APIWeatherReport currentWeather = repo.getCurrentWeather(userRequest);
-        double apiMaxTemp = currentWeather.getTemperature().getMax();
-        double apiMinTemp = currentWeather.getTemperature().getMin();
-        assertTrue(apiMinTemp < apiMaxTemp);
-    }
-
-    @Test
-    @Ignore
-    public void testIfTempIsInRightFormat() {
-        fail();
-    }
-
-    @Test
-    @Ignore
-    public void testIfGEOIsInRightFormat() {
-        fail();
-    }
-
-    @Test
-    public void testHTTPConnection() throws IOException {
-        String urlString = "http://stackoverflow.com/about";
-        URL url = new URL(urlString);
-        HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
-        urlConn.connect();
-        assertEquals(HttpURLConnection.HTTP_OK, urlConn.getResponseCode());
-    }
-
-
-    @Test
-    public void testIfWeatherRepoResponseCurrentTempIsValid() throws IOException {
-        // [given]
-        APIWeatherRequest userRequest = new APIWeatherRequest("Tallinn", "ee");
-        // [when]
-        APIWeatherReport apiWeatherReport = repo.getCurrentWeather(userRequest);
-        // [then]
-        ValidateInfo validateInfo = new ValidateInfo(apiWeatherReport.getTemperature(), apiWeatherReport.getCoordinates());
-        assertTrue(validateInfo.validateTemperature());
+    public void testGetForecastThreeDaysReturnsConverterResult() throws Exception {
+        APIWeatherForecast expectedForecast = new APIWeatherForecast( new City("","",new CoordinatesOfCity(0,0)),
+                new ArrayList<>());
+        when(mockConverter.convert(any(OpenWeatherForecast.class)))
+                .thenReturn(expectedForecast);
+        APIWeatherForecast actualForecast = this.repo.getForecastThreeDays(new APIWeatherRequest("Tallinn", "ee"));
+        Assert.assertEquals(expectedForecast, actualForecast);
     }
 }
