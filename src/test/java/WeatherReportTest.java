@@ -26,6 +26,7 @@ import static org.junit.Assert.fail;
 //http://samples.openweathermap.org/data/2.5/weather?q=Tallinn,ee&appid=8695d243f5c59d68389568a82bdc9e2b
 
 public class WeatherReportTest {
+
     private OpenWeatherRepository repo;
 
     @Before

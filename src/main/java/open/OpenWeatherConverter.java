@@ -22,8 +22,8 @@ public class OpenWeatherConverter {
         today.set(Calendar.HOUR_OF_DAY,0);
         today.set(Calendar.MINUTE,0);
         today.set(Calendar.SECOND,0);
-        final long startOfToday = today.getTimeInMillis();
-        final long lengthOfDay = 24*60*60*100;
+        //final long startOfToday = today.getTimeInMillis();
+        //final long lengthOfDay = 24*60*60*100;
 
         //ArrayList<OneDay> dayReports = new ArrayList<>();
         Function<Integer, Stream<OpenWeatherForecastDataPoint>> getDatapoints =
@@ -49,22 +49,6 @@ public class OpenWeatherConverter {
             );
         }
 
-        /*
-        for (int i = 0; i < 5; i++) {
-            double max = -Double.MAX_VALUE;
-            double min = Double.MAX_VALUE;
-            for (int j = i*8; j < i*8 + 8; j++) {
-                System.out.println(forecast.getDataPoints().get(j).getTimestamp() * 1000);
-            }
-        }*/
-
-        /*
-        System.out.println(dayReports.get(0).getDate().toString());
-        System.out.println(dayReports.get(1).getDate().toString());
-        System.out.println(dayReports.get(2).getDate().toString());
-        System.out.println(dayReports.get(3).getDate().toString());
-        System.out.println(dayReports.get(4).getDate().toString());
-        System.out.println(new Date().toString()); */
 
         return new APIWeatherForecast(
                 new City(forecast.getCity().getName(), forecast.getCity().getCountry(),
@@ -73,7 +57,7 @@ public class OpenWeatherConverter {
         );
     }
 
-    public APIWeatherReport convert(OpenWeatherReport report) {
+    APIWeatherReport convert(OpenWeatherReport report) {
         return new APIWeatherReport(
                 new City(report.getCity(), report.getCountry(), new CoordinatesOfCity(report.getCoordinates().getLat(),
                         report.getCoordinates().getLon())),

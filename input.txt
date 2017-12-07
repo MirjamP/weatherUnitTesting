@@ -1,0 +1,3 @@
+Tallinn;ee
+Tartu;ee
+City of London;gb

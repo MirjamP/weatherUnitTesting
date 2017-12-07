@@ -14,14 +14,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by mirja on 26/11/2017.
- */
+
 public class OpenWeatherConverterTest {
 
-    OpenWeatherConverter converter = new OpenWeatherConverter();
-    OpenWeatherReport inputReport = new OpenWeatherReport();
-    OpenWeatherForecast inputForecast = new OpenWeatherForecast();
+    private OpenWeatherConverter converter = new OpenWeatherConverter();
+    private OpenWeatherReport inputReport = new OpenWeatherReport();
+    private OpenWeatherForecast inputForecast = new OpenWeatherForecast();
 
     @Before
     public void setUp() throws Exception {

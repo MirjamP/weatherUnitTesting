@@ -17,7 +17,7 @@ public class Main {
         OpenWeatherRepository repo = new OpenWeatherRepository(new HttpReader(), new OpenWeatherConverter(), new JsonConverter());
 
         dealWithFiles(repo);
-        //dealWithConsole(repo);
+        dealWithConsole(repo);
     }
 
     private static void dealWithConsole(OpenWeatherRepository repo) throws IOException {
@@ -30,31 +30,33 @@ public class Main {
                 city = in.nextLine();
                 System.out.print("Enter country code: ");
                 country = in.nextLine();
-            } catch(NoSuchElementException e){
+            } catch(Exception e){
                 break;
             }
-            APIWeatherReport current = repo.getCurrentWeather(new APIWeatherRequest(city, country));
-            APIWeatherForecast forecast = repo.getForecastThreeDays(new APIWeatherRequest(city, country));
+            try {
+                APIWeatherReport current = repo.getCurrentWeather(new APIWeatherRequest(city, country));
+                APIWeatherForecast forecast = repo.getForecastThreeDays(new APIWeatherRequest(city, country));
+                forecast.getDayReports().stream().forEach(f -> {
+                    System.out.println(f.getDate());
+                    System.out.println(f.getTemperature().getMax());
+                    System.out.println(f.getTemperature().getMin());
+                });
 
-            forecast.getDayReports().stream().forEach(f -> {
-                System.out.println(f.getDate());
-                System.out.println(f.getTemperature().getMax());
-            });
-
-            //TODO kirjutada selle väljund ka faili (st korduva koodi osa oma meetodisse)
-
-            System.out.println("==== Report for " + city + "====");
-            System.out.print("Current temperature:");
-            System.out.println(current.getTemperature());
-            System.out.print("3 day min: ");
-            System.out.println(forecast.getDayReports().stream().mapToDouble(f -> f.getTemperature().getMin()).min()
-                    .getAsDouble());
-            System.out.print("3 day max: ");
-            System.out.println(forecast.getDayReports().stream().mapToDouble(f -> f.getTemperature().getMax())
-                    .max().getAsDouble());
-            System.out.print("Coordinates: ");
-            System.out.println(current.getCity().getCoordinates().getLatitude() + ", " + current.getCity().getCoordinates
-                    ().getLongitude());
+                System.out.println("==== Report for " + city + "====");
+                System.out.print("Current temperature:");
+                System.out.println(current.getTemperature());
+                System.out.print("3 day min: ");
+                System.out.println(forecast.getDayReports().stream().mapToDouble(f -> f.getTemperature().getMin()).min()
+                        .getAsDouble());
+                System.out.print("3 day max: ");
+                System.out.println(forecast.getDayReports().stream().mapToDouble(f -> f.getTemperature().getMax())
+                        .max().getAsDouble());
+                System.out.print("Coordinates: ");
+                System.out.println(current.getCity().getCoordinates().getLatitude() + ", " + current.getCity().getCoordinates
+                        ().getLongitude());
+            } catch(Exception p) {
+                break;
+            }
         }
     }
 
