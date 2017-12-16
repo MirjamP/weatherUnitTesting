@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-
+/**
+ * Created by mirja on 26/11/2017.
+ */
 public class WeatherForecastTest {
 
 

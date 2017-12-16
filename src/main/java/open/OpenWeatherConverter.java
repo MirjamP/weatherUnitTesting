@@ -22,8 +22,6 @@ public class OpenWeatherConverter {
         today.set(Calendar.HOUR_OF_DAY,0);
         today.set(Calendar.MINUTE,0);
         today.set(Calendar.SECOND,0);
-        //final long startOfToday = today.getTimeInMillis();
-        //final long lengthOfDay = 24*60*60*100;
 
         //ArrayList<OneDay> dayReports = new ArrayList<>();
         Function<Integer, Stream<OpenWeatherForecastDataPoint>> getDatapoints =
@@ -57,7 +55,7 @@ public class OpenWeatherConverter {
         );
     }
 
-    APIWeatherReport convert(OpenWeatherReport report) {
+    public APIWeatherReport convert(OpenWeatherReport report) {
         return new APIWeatherReport(
                 new City(report.getCity(), report.getCountry(), new CoordinatesOfCity(report.getCoordinates().getLat(),
                         report.getCoordinates().getLon())),

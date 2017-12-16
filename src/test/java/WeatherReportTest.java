@@ -2,9 +2,7 @@ import com.google.gson.Gson;
 import open.HttpReader;
 import open.JsonConverter;
 import open.OpenWeatherConverter;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 
 import data.service.APIWeatherReport;
 import data.service.APIWeatherRequest;
@@ -26,18 +24,21 @@ import static org.junit.Assert.fail;
 //http://samples.openweathermap.org/data/2.5/weather?q=Tallinn,ee&appid=8695d243f5c59d68389568a82bdc9e2b
 
 public class WeatherReportTest {
-
     private OpenWeatherRepository repo;
+
+
+    @BeforeClass
+    public static void testIfInternetConnected() {
+        try{
+            new HttpReader().read(new URL("http://www.example.com"));
+        } catch(IOException e){
+            Assume.assumeTrue("No internet connection",false);
+        }
+    }
 
     @Before
     public void setUp() throws Exception {
         this.repo = new OpenWeatherRepository(new HttpReader(), new OpenWeatherConverter(), new JsonConverter());
-    }
-
-    @Test
-    @Ignore
-    public void testHttpConnectionToExampleApi() {
-        fail();
     }
 
     @Test
@@ -52,12 +53,6 @@ public class WeatherReportTest {
         APIWeatherRequest userRequest = new APIWeatherRequest("Tallinn", "ee");
         APIWeatherReport apiWeatherReport = repo.getCurrentWeather(userRequest);
         assertEquals(userRequest.getCountry().toUpperCase(), apiWeatherReport.getCity().getCountryCode());
-    }
-
-    @Test
-    @Ignore
-    public void testIfInternetConnected() {
-        fail();
     }
 
     @Test

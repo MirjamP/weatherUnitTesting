@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
+/**
+ * Created by mirja on 26/11/2017.
+ */
 public class OpenWeatherConverterTest {
 
     private OpenWeatherConverter converter = new OpenWeatherConverter();

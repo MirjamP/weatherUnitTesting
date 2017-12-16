@@ -1,3 +1,5 @@
 .idea
 target
-src/main/res/strings.properties
+output/*
+!output/OUTPUT_WILL_APPEAR_HERE
+homework_unittesting.iml
